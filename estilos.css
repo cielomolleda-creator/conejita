@@ -1,0 +1,134 @@
+:root {
+  --noche: #2a1233;
+  --ciruela: #5b2a6e;
+  --rosa: #ff6f91;
+  --durazno: #ffc1a6;
+  --crema: #fff1ea;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; }
+body {
+  background: radial-gradient(ellipse at 50% 20%, var(--ciruela), var(--noche) 70%) fixed;
+  color: var(--crema);
+  font-family: 'Lora', Georgia, serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+/* Capa roja para el modo "enojado" */
+.rojo {
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at 50% 30%, #e01b24, #6e0008 75%);
+  opacity: 0;
+  transition: opacity .5s;
+  pointer-events: none;
+  z-index: 0;
+}
+body.enojado .rojo { opacity: 1; }
+
+/* Corazones flotando */
+.corazones { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+.corazon {
+  position: absolute; bottom: -40px;
+  color: var(--rosa); opacity: 0;
+  animation: subir linear forwards;
+}
+@keyframes subir {
+  0%   { transform: translateY(0) translateX(0) scale(.6); opacity: 0; }
+  10%  { opacity: .8; }
+  100% { transform: translateY(-110vh) translateX(var(--vaiven)) scale(1.2); opacity: 0; }
+}
+body.enojado .corazones { display: none; }
+
+main { position: relative; z-index: 2; padding: 24px; max-width: 600px; width: 100%; }
+
+.latido {
+  width: 110px; height: 100px; margin: 0 auto 22px;
+  animation: latir 1.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 24px rgba(255,111,145,.7));
+}
+@keyframes latir {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.18); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.12); }
+  70% { transform: scale(1); }
+}
+
+h1 {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(3rem, 12vw, 5rem);
+  line-height: 1; color: var(--durazno); margin-bottom: 18px;
+}
+
+#mensaje {
+  font-style: italic;
+  font-size: clamp(1.05rem, 3.6vw, 1.3rem);
+  line-height: 1.7; min-height: 6.5em; white-space: pre-line;
+}
+#mensaje::after { content: '|'; margin-left: 2px; animation: parpadeo 1s steps(1) infinite; }
+@keyframes parpadeo { 50% { opacity: 0; } }
+
+/* Botones */
+.botones {
+  display: flex; flex-wrap: wrap; gap: 14px;
+  justify-content: center; align-items: center;
+  margin-top: 14px; min-height: 64px;
+}
+button {
+  padding: 12px 28px;
+  font: 700 1.5rem 'Caveat', cursive;
+  color: var(--noche); background: var(--durazno);
+  border: 0; border-radius: 999px; cursor: pointer;
+  transition: transform .2s, background .2s, color .2s;
+}
+button:hover { transform: scale(1.06); background: var(--rosa); color: #fff; }
+button:focus-visible { outline: 3px solid var(--crema); outline-offset: 4px; }
+
+/* El botón que se escapa */
+#terminar {
+  background: transparent; color: var(--crema);
+  border: 2px dashed var(--durazno);
+}
+#terminar:hover { background: transparent; color: var(--crema); transform: none; }
+#terminar.huyendo {
+  position: fixed; z-index: 5;
+  transition: left .25s ease-out, top .25s ease-out;
+}
+
+#sorpresa, #pista {
+  font-family: 'Caveat', cursive;
+  margin-top: 20px;
+  transition: opacity .5s, transform .5s;
+}
+#sorpresa { font-size: 2.1rem; color: var(--rosa); min-height: 2.6rem; }
+#pista { font-size: 1.5rem; color: var(--durazno); min-height: 2rem; }
+
+/* Pantalla de enojo */
+#enojo { display: none; }
+body.enojado #enojo { display: block; animation: temblar .5s linear 3; }
+body.enojado #normal { display: none; }
+#enojo h2 {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(2.6rem, 11vw, 4.5rem);
+  line-height: 1.05; color: #fff; margin-bottom: 16px;
+  text-shadow: 0 0 20px rgba(0,0,0,.5);
+}
+#enojo p { font-size: 1.2rem; font-style: italic; margin-bottom: 26px; line-height: 1.6; }
+#enojo button { background: #fff; color: #b0000b; }
+#enojo button:hover { background: var(--durazno); color: #6e0008; }
+.roto { width: 100px; margin: 0 auto 16px; display: block; filter: drop-shadow(0 0 20px rgba(0,0,0,.6)); }
+@keyframes temblar {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-12px) rotate(-1deg); }
+  40% { transform: translateX(12px) rotate(1deg); }
+  60% { transform: translateX(-8px); }
+  80% { transform: translateX(8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .latido, .corazon, #mensaje::after, body.enojado #enojo { animation: none; }
+}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Para ti</title>
+
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<div class="rojo"></div>
+<div class="corazones" id="corazones" aria-hidden="true"></div>
+
+<main>
+  <!-- Pantalla normal -->
+  <div id="normal">
+    <svg class="latido" viewBox="0 0 32 29" aria-hidden="true">
+      <path fill="#ff6f91" d="M16 28.5C5 20 0 14.5 0 8.5 0 3.8 3.6 0 8.1 0c3.2 0 6.1 1.8 7.9 4.6C17.8 1.8 20.7 0 23.9 0 28.4 0 32 3.8 32 8.5c0 6-5 11.5-16 20z"/>
+    </svg>
+
+    <h1>Para mi hermosa 🐰</h1>
+    <p id="mensaje" aria-live="polite"></p>
+
+    <div class="botones" id="botones">
+      <button id="siempre">Siempre te amaré</button>
+      <button id="razon">Una razón más</button>
+      <button id="terminar">Terminar esta relación</button>
+    </div>
+
+    <p id="sorpresa"></p>
+    <p id="pista"></p>
+  </div>
+
+  <!-- Pantalla enojada -->
+  <div id="enojo">
+    <svg class="roto" viewBox="0 0 32 29" aria-hidden="true">
+      <path fill="#2b0004" d="M16 28.5C5 20 0 14.5 0 8.5 0 3.8 3.6 0 8.1 0c3.2 0 6.1 1.8 7.9 4.6C17.8 1.8 20.7 0 23.9 0 28.4 0 32 3.8 32 8.5c0 6-5 11.5-16 20z"/>
+      <path fill="none" stroke="#ff4d5a" stroke-width="1.4" d="M17 2l-3 7 4 4-4 6 2 9"/>
+    </svg>
+    <h2>¿Por qué me quieres terminar noob? 💔</h2>
+    <p>Yo que te año tanto… ¿y asi me pagas por comprar tu alcachofa?<br>Mejor dime que me odias.</p>
+    <button id="perdon">Fue un error, te ano</button>
+  </div>
+</main>
+
+<script>
+  // 1) Cambia este texto por tu mensaje
+  const texto =
+`Los días son largos, pero tú los haces más cortos.
+Gracias por mirarme siempre a mi y por tu paciencia
+y por ser mi lugar favorito.`;
+
+  // 2) Cambia estas razones por las tuyas
+  const razones = [
+    'Porque me haces reír hasta cuando no quiero.',
+    'Porque contigo me nace hacer muchas cosas que no quisiera con nadie mas.',
+    'Porque tu simple presencia me hace sentirme llena.',
+    'Porque me haces mejorar cada dia mas en mis estudios.',
+    'Porque cada vez que veo una flor me acordo de ti ',
+    'Porque se que me escogerias a mi entre mil personas.',
+    'Porque creo que me amas mas que ese coreano de los bitigues '
+
+  ];
+
+  // 3) Frases que dice cuando intentas atrapar el botón
+  const huidas = [
+    'Uy, casi nerd 😏',
+    'Ni lo toques',
+    '¿En serio lo intentas?',
+    'Ese botón no funciona contigo nunca',
+    'Mejor presiona "Siempre te amaré" chiquibeibe 💕',
+    'Jamás me vas a atrapar loca'
+  ];
+
+  const $ = id => document.getElementById(id);
+
+  // Máquina de escribir
+  const el = $('mensaje');
+  let i = 0;
+  (function escribir() {
+    if (i <= texto.length) { el.textContent = texto.slice(0, i++); setTimeout(escribir, 55); }
+  })();
+
+  // Corazones
+  const cont = $('corazones');
+  function nuevoCorazon() {
+    const c = document.createElement('span');
+    c.className = 'corazon'; c.textContent = '♥';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.fontSize = (12 + Math.random() * 26) + 'px';
+    c.style.setProperty('--vaiven', (Math.random() * 120 - 60) + 'px');
+    const dur = 6 + Math.random() * 6;
+    c.style.animationDuration = dur + 's';
+    cont.appendChild(c);
+    setTimeout(() => c.remove(), dur * 1000);
+  }
+  setInterval(nuevoCorazon, 450);
+
+  function lluvia() { for (let n = 0; n < 30; n++) setTimeout(nuevoCorazon, n * 60); }
+
+  // "Siempre te amaré"
+  $('siempre').addEventListener('click', () => {
+    lluvia();
+    $('sorpresa').textContent = 'Siempre te amaré, hoy y mañana ♥';
+  });
+
+  // "Una razón más"
+  let r = 0;
+  $('razon').addEventListener('click', () => {
+    $('sorpresa').textContent = razones[r++ % razones.length];
+    lluvia();
+  });
+
+  // Botón que se escapa
+  const btn = $('terminar');
+  let intentos = 0;
+  function escapar(e) {
+    if (e && e.cancelable) e.preventDefault();
+    const w = btn.offsetWidth, h = btn.offsetHeight, m = 12;
+    // Primera vez: lo saca del flujo y lo deja donde estaba para que no salte
+    if (!btn.classList.contains('huyendo')) {
+      const rect = btn.getBoundingClientRect();
+      btn.classList.add('huyendo');
+      btn.style.left = rect.left + 'px';
+      btn.style.top = rect.top + 'px';
+      void btn.offsetWidth;
+    }
+    btn.style.left = (m + Math.random() * (window.innerWidth - w - m * 2)) + 'px';
+    btn.style.top  = (m + Math.random() * (window.innerHeight - h - m * 2)) + 'px';
+    $('pista').textContent = huidas[intentos++ % huidas.length];
+  }
+  btn.addEventListener('pointerenter', escapar);
+  btn.addEventListener('touchstart', escapar, { passive: false });
+  btn.addEventListener('focus', escapar);
+
+  // Si de verdad logra presionarlo: modo enojado
+  btn.addEventListener('click', () => { document.body.classList.add('enojado'); });
+
+  // Volver a la normalidad
+  $('perdon').addEventListener('click', () => {
+    document.body.classList.remove('enojado');
+    btn.classList.remove('huyendo');
+    btn.style.left = btn.style.top = '';
+    $('pista').textContent = '';
+    $('sorpresa').textContent = 'Así me gusta, mi amor ♥';
+    lluvia();
+  });
+</script>
+</body>
+</html>
